@@ -7,8 +7,8 @@ The the records is stored using AES *(Ths feature is in the roadmap, but first I
 
 # Todo
 
-- [ ] Write missing test cases.
 - [ ] Write command line tool to manage the server.
+- [ ] Write test cases.
 - [ ] Create custom router for HTTP server.
 - [ ] Create a HTTP server start the database and to receive requests.
 - [ ] Create a HTTP client to connect the database server and to perform operations.
