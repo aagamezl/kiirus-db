@@ -10,11 +10,16 @@ const getParams = (params) => {
   let previous
 
   const options = params.slice(2).reduce((accumulator, current) => {
-    if (!current.startsWith('--')) {
-      accumulator[previous.slice(2)] = isBoolean(current) ? getBoolean(current) : current
-    } else {
+
+    if (current.startsWith('-') || current.startsWith('--')) {
+      const isShourtcut = !current.startsWith('--')
+
       previous = current
-      accumulator[current.slice(2)] = true
+      accumulator[current.slice(isShourtcut ? 1 : 2)] = true
+    } else {
+      const isShourtcut = !previous.startsWith('--')
+
+      accumulator[previous.slice(isShourtcut ? 1 : 2)] = isBoolean(current) ? getBoolean(current) : current
     }
 
     return accumulator
