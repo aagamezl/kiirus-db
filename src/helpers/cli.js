@@ -10,7 +10,6 @@ const getParams = (params) => {
   let previous
 
   const options = params.slice(2).reduce((accumulator, current) => {
-
     if (current.startsWith('-') || current.startsWith('--')) {
       const isShourtcut = !current.startsWith('--')
 

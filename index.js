@@ -17,17 +17,17 @@ const { getParams } = require('./src/helpers/cli')
 //   'client.pem'
 // ]
 
-const params = [
-  '/home/aagamezl/.nvm/versions/node/v10.13.0/bin/node',
-  '/home/aagamezl/.nvm/versions/node/v10.13.0/bin/kiirusdb',
-  '-p',
-  '3000',
-  '-S',
-  '--cert',
-  'path/to/cert.pem',
-  '-K',
-  'path/to/key.pem',
-]
+// const params = [
+//   '/home/aagamezl/.nvm/versions/node/v10.13.0/bin/node',
+//   '/home/aagamezl/.nvm/versions/node/v10.13.0/bin/kiirusdb',
+//   '-p',
+//   '3000',
+//   '-S',
+//   '--cert',
+//   'path/to/cert.pem',
+//   '-K',
+//   'path/to/key.pem',
+// ]
 
-// console.log(getParams(process.argv))
-console.log(getParams(params))
+console.log(getParams(process.argv))
+// console.log(getParams(params))
