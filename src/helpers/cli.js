@@ -1,6 +1,6 @@
 const getBoolean = (value) => {
   if (['true', 'yes', '1'].includes(value)) {
-    return true;
+    return true
   } else if (['false', 'no', '0'].includes(value)) {
     return false
   }
@@ -29,10 +29,10 @@ const getParams = (params) => {
 
 const isBoolean = (value) => {
   if (['true', 'yes', '1', 'false', 'no', '0'].includes(value)) {
-    return true;
+    return true
   }
 
-  return false;
+  return false
 }
 
 module.exports = {

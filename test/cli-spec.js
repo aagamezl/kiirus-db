@@ -1,4 +1,4 @@
-import test from 'ava';
+import test from 'ava'
 
 import { getParams } from './../src/helpers/cli'
 
@@ -22,10 +22,10 @@ test('should parse default true', t => {
     kmipServerName: 'KMIP Server HostName',
     kmipPort: '3000',
     kmipServerCAFile: 'ca.pem',
-    kmipClientCertificateFile: 'client.pem' 
+    kmipClientCertificateFile: 'client.pem'
   }
 
-  t.deepEqual(getParams(params), result);
+  t.deepEqual(getParams(params), result)
 })
 
 test('should parse false value', t => {
@@ -49,10 +49,10 @@ test('should parse false value', t => {
     kmipServerName: 'KMIP Server HostName',
     kmipPort: '3000',
     kmipServerCAFile: 'ca.pem',
-    kmipClientCertificateFile: 'client.pem' 
+    kmipClientCertificateFile: 'client.pem'
   }
 
-  t.deepEqual(getParams(params), result);
+  t.deepEqual(getParams(params), result)
 })
 
 test('should parse shortcut params', t => {
