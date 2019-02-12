@@ -1,0 +1,73 @@
+const { matchAll } = require('./helpers/utils')
+
+let routes = {}
+
+const addRoute = (method, path, handler) => {
+  const route = {
+    handler,
+    params: matchAll(/:(\w*)/g, path).map(param => param[1]),
+    path: new RegExp(`^${path.replace(/\//g, '\\/').replace(/:(\w*)/g, '(\\w*)')}$`),
+    method,
+  }
+
+  if (Array.isArray(routes[method]) === false) {
+    routes[method] = []
+  }
+
+  routes[method].push(route)
+}
+
+const getRoutes = () => {
+  return routes
+}
+
+const routerMethods = {
+  delete: (path, handler) => {
+    addRoute('DELETE', path, handler)
+  },
+  get: (path, handler) => {
+    addRoute('GET', path, handler)
+  },
+  path: (path, handler) => {
+    addRoute('PATH', path, handler)
+  },
+  post: (path, handler) => {
+    addRoute('POST', path, handler)
+  },
+  put: (path, handler) => {
+    addRoute('PUT', path, handler)
+  }
+}
+
+const setRoutes = (newRoutes) => {
+  routes = newRoutes
+}
+
+const verifyRoute = (path, method) => {
+  for (const route of routes[method]) {
+    let match = path.match(route.path)
+
+    if (match !== null) {
+      match = match.slice(1)
+
+      return {
+        ...route,
+        params: match.reduce((params, value, index) => {
+          params[route.params[index]] = value
+
+          return params
+        }, {})
+      }
+    }
+  }
+
+  return undefined
+}
+
+module.exports = {
+  addRoute,
+  getRoutes,
+  ...routerMethods,
+  setRoutes,
+  verifyRoute
+}
