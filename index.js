@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-const { getParams } = require('./src/helpers/cli')
-// const Server = require('./src/Server')
 const server = require('./src/Server')
+const { getParams } = require('./src/helpers/cli')
+const package = require('./package')
 
-const params = getParams(process.argv)
+const params = getParams(process.argv || {})
 
 // console.log(params)
 
@@ -16,14 +16,27 @@ if (params.help || params.h) {
 
 server.listen(params.port || params.p, params.host || params.H)
 
-server.get('/version', (request, response) => {
-  server.write(response, JSON.stringify({ message: 'server post' }))
+server.post('/database/:id', (request, response) => {
+  // console.log(request, response);
+  console.log(request.params, request.query);
+
+  server.write(response, JSON.stringify({ message: `route: ${request.url}` }))
 })
 
-// const server = new Server(params)
+server.get('/route/:id', (request, response) => {
+  // console.log(request, response);
+  console.log(request.params, request.query);
 
-// server.post('/', (request, response) => {
-//   server.write(response, JSON.stringify({ message: 'server post' }))
-// })
+  server.write(response, JSON.stringify({ message: `route: ${request.url}` }))
+})
 
-// server.start()
+server.get('/route', (request, response) => {
+  // console.log(request, response);
+  console.log(request.params, request.query);
+
+  server.write(response, JSON.stringify({ message: `route: ${request.url}` }))
+})
+
+server.get('/version', (request, response) => {
+  server.write(response, JSON.stringify({ version: package.version }))
+})

@@ -1,50 +1,54 @@
 const http = require('http')
 const os = require('os')
 const path = require('path')
+const url = require('url')
 
-const { merge } = require('./helpers/object')
+// const { routerMethods, verifyRoute } = require('./Router')
+const router = require('./Router')
 
 const DEFAULT_CONFIG = {
-  'criptoAlgorithm': 'aes-256-ctr',
-  'dbpath': path.join(os.homedir(), './data/db'),
   'host': '::',
   'port': 8008
-}
-
-const routes = {}
-
-const addRoute = (verb, path, handler) => {
-  routes[verb] = { [path]: handler }
-}
-
-const get = (path, handler) => {
-  addRoute('GET', path, handler)
 }
 
 const listen = (port = DEFAULT_CONFIG.port, host = DEFAULT_CONFIG.host) => {
   const server = http.createServer(requestHandler)
 
-  server.listen(port, host, (err) => {
-    if (err) {
-      return console.log('Something bad happened', err)
+  // server.listen(0, () => console.log(server.address().port))
+
+  server.listen(port, host, (error) => {
+    if (error) {
+      console.log('Something bad happened', error)
+
+      throw new Error(`Something bad happened` + error)
     }
 
-    console.log(`Server is listening on ${host}:${port}`)
+    console.log(`Server is listening on host ${host} and port ${port}`)
   })
 }
 
-const post = (path, handler) => {
-  addRoute('POST', path, handler)
-}
-
 const requestHandler = (request, response) => {
-  const { method, url } = request
+  const parsedUrl = url.parse(request.url, true)
+  const route = router.verifyRoute(parsedUrl.pathname, request.method)
 
-  console.log(request)  
 
-  switch (method) {
+  if (route === undefined) {
+    write(response, '', 404)
+  }
+
+  request.params = route.params || {}
+  request.query = parsedUrl.query || {}
+
+  switch (request.method) {
+    case 'DELETE':
+      break
+
     case 'GET':
+      route.handler(request, response)
 
+      break
+
+    case 'PATH':
       break
 
     case 'POST':
@@ -62,9 +66,13 @@ const requestHandler = (request, response) => {
         }
 
         request.body = body
-        routes[method][url](request, response)
+
+        route.handler(request, response)
       })
 
+      break
+
+    case 'PUT':
       break
   }
 }
@@ -96,71 +104,10 @@ const write = (response, data, statusCode = 200) => {
 }
 
 module.exports = {
-  get,
+  // get,
   listen,
-  post,
+  // post,
+  ...router,
+  usage,
   write
 }
-
-// module.exports = class Server {
-//   constructor ({ criptoAlgorithm, dbpath, host, port }) {
-//     this.config = merge(DEFAULT_CONFIG, ...arguments)
-
-//     this.routes = {}
-
-//     this.requestHandler = this.requestHandler.bind(this)
-
-//     this.server = http.createServer(this.requestHandler)
-//   }
-
-//   post (path, handler) {
-//     this.routes['POST'] = { [path]: handler }
-//   }
-
-//   requestHandler (request, response) {
-//     const { method, url } = request
-
-//     switch (method) {
-//       case 'GET':
-
-//         break
-
-//       case 'POST':
-//         let body = []
-
-//         request.on('data', (chunk) => {
-//           body.push(chunk)
-//         })
-
-//         request.on('end', () => {
-//           body = Buffer.concat(body).toString()
-
-//           if (request.headers['content-type'] === 'application/json') {
-//             body = JSON.parse(body)
-//           }
-
-//           request.body = body
-//           this.routes[method][url](request, response)
-//         })
-
-//         break
-//     }
-//   }
-
-//   start () {
-//     this.server.listen(this.config.port, (err) => {
-//       if (err) {
-//         return console.log('Something bad happened', err)
-//       }
-
-//       console.log(`Server is listening on ${this.config.port}`)
-//     })
-//   }
-
-//   write (response, data, statusCode = 200) {
-//     response.setHeader('Content-Type', 'application/json')
-//     response.writeHead(statusCode)
-//     response.write(data)
-//     response.end()
-//   }
-// }
