@@ -31,7 +31,6 @@ const requestHandler = (request, response) => {
   const parsedUrl = url.parse(request.url, true)
   const route = router.verifyRoute(parsedUrl.pathname, request.method)
 
-
   if (route === undefined) {
     write(response, '', 404)
   }
