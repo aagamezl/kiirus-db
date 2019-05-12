@@ -1,7 +1,7 @@
 const http = require('http')
-const os = require('os')
-const path = require('path')
-const url = require('url')
+// const os = require('os')
+// const path = require('path')
+// const url = require('url')
 
 // const { routerMethods, verifyRoute } = require('./Router')
 const router = require('./Router')
@@ -11,6 +11,12 @@ const DEFAULT_CONFIG = {
   'port': 8008
 }
 
+/**
+ * 
+ * @param {number} [port=DEFAULT_CONFIG.port] 
+ * @param {string} [host=DEFAULT_CONFIG.host] 
+ * @returns {void}
+ */
 const listen = (port = DEFAULT_CONFIG.port, host = DEFAULT_CONFIG.host) => {
   const server = http.createServer(requestHandler)
 
@@ -28,51 +34,42 @@ const listen = (port = DEFAULT_CONFIG.port, host = DEFAULT_CONFIG.host) => {
 }
 
 const requestHandler = (request, response) => {
-  const parsedUrl = url.parse(request.url, true)
-  const route = router.verifyRoute(parsedUrl.pathname, request.method)
+  // const parsedUrl = url.parse(request.url, true)
+  const routes = router.verifyRoute(request.url, request.method)
 
-  if (route === undefined) {
+  if (routes.length === 0) {
     write(response, '', 404)
+
+    return
   }
 
-  request.params = route.params || {}
-  request.query = parsedUrl.query || {}
+  // request.params = route.params || {}
+  // request.query = parsedUrl.query || {}
 
-  switch (request.method) {
-    case 'DELETE':
-      break
+  // routes.forEach((route) => {
+  for (const route of routes) {
+    request.params = route.params
+    request.query = route.query
 
-    case 'GET':
-      route.handler(request, response)
-
-      break
-
-    case 'PATH':
-      break
-
-    case 'POST':
-      let body = []
-
-      request.on('data', (chunk) => {
-        body.push(chunk)
-      })
-
-      request.on('end', () => {
-        body = Buffer.concat(body).toString()
-
-        if (request.headers['content-type'] === 'application/json') {
-          body = JSON.parse(body)
-        }
-
-        request.body = body
-
+    switch (request.method) {
+      case 'DELETE':
+      case 'GET':
         route.handler(request, response)
-      })
 
-      break
+        break
 
-    case 'PUT':
-      break
+      case 'PATCH':
+      case 'POST':
+      case 'PUT':
+        getBody(request, (body) => {
+          request.body = body
+
+          route.handler(request, response)
+        })
+
+        break
+    }
+  // })
   }
 }
 
