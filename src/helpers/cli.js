@@ -1,6 +1,6 @@
 const getBoolean = (value) => {
   if (['true', 'yes', '1'].includes(value)) {
-    return true;
+    return true
   } else if (['false', 'no', '0'].includes(value)) {
     return false
   }
@@ -10,7 +10,6 @@ const getParams = (params) => {
   let previous
 
   const options = params.slice(2).reduce((accumulator, current) => {
-
     if (current.startsWith('-') || current.startsWith('--')) {
       const isShourtcut = !current.startsWith('--')
 
@@ -30,10 +29,10 @@ const getParams = (params) => {
 
 const isBoolean = (value) => {
   if (['true', 'yes', '1', 'false', 'no', '0'].includes(value)) {
-    return true;
+    return true
   }
 
-  return false;
+  return false
 }
 
 module.exports = {

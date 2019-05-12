@@ -1,33 +1,46 @@
 #!/usr/bin/env node
 
+const server = require('./src/Server')
 const { getParams } = require('./src/helpers/cli')
+const package = require('./package')
 
-// const params = [
-//   '/home/aagamezl/.nvm/versions/node/v10.13.0/bin/node',
-//   '/home/aagamezl/.nvm/versions/node/v10.13.0/bin/kiirusdb',
-//   '--enableEncryption',
-//   'false',
-//   '--kmipServerName',
-//   'KMIP Server HostName',
-//   '--kmipPort',
-//   '3000',
-//   '--kmipServerCAFile',
-//   'ca.pem',
-//   '--kmipClientCertificateFile',
-//   'client.pem'
-// ]
+const params = getParams(process.argv || {})
 
-const params = [
-  '/home/aagamezl/.nvm/versions/node/v10.13.0/bin/node',
-  '/home/aagamezl/.nvm/versions/node/v10.13.0/bin/kiirusdb',
-  '-p',
-  '3000',
-  '-S',
-  '--cert',
-  'path/to/cert.pem',
-  '-K',
-  'path/to/key.pem',
-]
+// console.log(params)
 
-// console.log(getParams(process.argv))
-console.log(getParams(params))
+if (params.help || params.h) {
+  console.log(server.usage())
+
+  process.exit();
+}
+
+server.listen(params.port || params.p, params.host || params.H)
+
+server.get('/', (request, response) => {
+  server.write(response, `<h1>${package.name} ${package.version}</h1>`, 200, 'text/html')
+})
+
+server.post('/database/:id', (request, response) => {
+  // console.log(request, response);
+  console.log(request.params, request.query);
+
+  server.write(response, JSON.stringify({ message: `route: ${request.url}` }))
+})
+
+server.get('/route/:id', (request, response) => {
+  // console.log(request, response);
+  console.log(request.params, request.query);
+
+  server.write(response, JSON.stringify({ message: `route: ${request.url}` }))
+})
+
+server.get('/route', (request, response) => {
+  // console.log(request, response);
+  console.log(request.params, request.query);
+
+  server.write(response, JSON.stringify({ message: `route: ${request.url}` }))
+})
+
+server.get('/version', (request, response) => {
+  server.write(response, JSON.stringify({ version: package.version }))
+})
