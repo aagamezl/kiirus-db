@@ -16,6 +16,10 @@ if (params.help || params.h) {
 
 server.listen(params.port || params.p, params.host || params.H)
 
+server.get('/', (request, response) => {
+  server.write(response, `<h1>${package.name} ${package.version}</h1>`, 200, 'text/html')
+})
+
 server.post('/database/:id', (request, response) => {
   // console.log(request, response);
   console.log(request.params, request.query);

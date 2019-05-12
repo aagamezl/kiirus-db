@@ -3,8 +3,8 @@
  *
  * @typedef Route
  * @type {Object}
- * @property {Function} handler - an ID.
- * @property {Object.<string, string>} params - an ID.
+ * @property {Function} handler
+ * @property {Object.<string, string>} params
  * @property {string} method - The method of the route
  * @property {RegExp} path - The RegEx for the route
  * @property {Object.<string, string>} query - Query string object
@@ -14,7 +14,7 @@ const url = require('url')
 
 const { matchAll } = require('./helpers/utils')
 
-/** @type {Array<Route>} */
+/** @type {Object.<string, Route>} */
 let routes = {}
 
 /**
@@ -29,6 +29,7 @@ const addRoute = (method, path, handler) => {
     params: matchAll(/:(\w*)/g, path).map(param => param[1]),
     path: new RegExp(`^${path.replace(/\//g, '\\/').replace(/:([A-Za-z0-9_-]+)/g, '([A-Za-z0-9_-]+)')}$`),
     method,
+    query: {}
   }
 
   if (Array.isArray(routes[method]) === false) {
@@ -128,11 +129,6 @@ const verifyRoute = (path, method) => {
 
       routes.push({
         ...route,
-        // params: match.reduce((params, value, index) => {
-        //   params[route.params[index]] = value
-
-        //   return params
-        // }, {}),
         params: route.params.reduce((params, key, index) => ({
           ...params,
           [key]: match[index]

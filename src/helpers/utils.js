@@ -6,8 +6,6 @@
  * @param {object} regex
  * @param {*} value
  * @returns {array}
- *
- * @memberOf Helper
  */
 const matchAll = (regex, value) => {
   let match = undefined

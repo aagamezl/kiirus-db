@@ -1,26 +1,25 @@
 const http = require('http')
-// const os = require('os')
-// const path = require('path')
-// const url = require('url')
 
-// const { routerMethods, verifyRoute } = require('./Router')
 const router = require('./Router')
 
+/**
+ * @type {Object}
+ * @property {Object.<string, string>} host Default host address for the server
+ * @property {Object.<string, number>} port Default port number for the server
+ */
 const DEFAULT_CONFIG = {
   'host': '::',
   'port': 8008
 }
 
 /**
- * 
- * @param {number} [port=DEFAULT_CONFIG.port] 
- * @param {string} [host=DEFAULT_CONFIG.host] 
+ *
+ * @param {number} [port=DEFAULT_CONFIG.port]
+ * @param {string} [host=DEFAULT_CONFIG.host]
  * @returns {void}
  */
 const listen = (port = DEFAULT_CONFIG.port, host = DEFAULT_CONFIG.host) => {
   const server = http.createServer(requestHandler)
-
-  // server.listen(0, () => console.log(server.address().port))
 
   server.listen(port, host, (error) => {
     if (error) {
@@ -33,8 +32,12 @@ const listen = (port = DEFAULT_CONFIG.port, host = DEFAULT_CONFIG.host) => {
   })
 }
 
+/**
+ *
+ * @param {IncomingMessage} request
+ * @param {ServerResponse} response
+ */
 const requestHandler = (request, response) => {
-  // const parsedUrl = url.parse(request.url, true)
   const routes = router.verifyRoute(request.url, request.method)
 
   if (routes.length === 0) {
@@ -43,10 +46,6 @@ const requestHandler = (request, response) => {
     return
   }
 
-  // request.params = route.params || {}
-  // request.query = parsedUrl.query || {}
-
-  // routes.forEach((route) => {
   for (const route of routes) {
     request.params = route.params
     request.query = route.query
@@ -69,10 +68,13 @@ const requestHandler = (request, response) => {
 
         break
     }
-  // })
   }
 }
 
+/**
+ * Show the usage message for the server
+ *
+ */
 const usage = () => {
   return [
     `  -p --port    Port to use [${DEFAULT_CONFIG.port}]`,
@@ -92,17 +94,22 @@ const usage = () => {
   ].join('\n');
 }
 
-const write = (response, data, statusCode = 200) => {
-  response.setHeader('Content-Type', 'application/json')
+/**
+ *
+ * @param {ServerResponse} response
+ * @param {string} data
+ * @param {number} [statusCode=200]
+ * @param {string} [contentType='application/json']
+ */
+const write = (response, data, statusCode = 200, contentType = 'application/json') => {
+  response.setHeader('Content-Type', contentType)
   response.writeHead(statusCode)
   response.write(data)
   response.end()
 }
 
 module.exports = {
-  // get,
   listen,
-  // post,
   ...router,
   usage,
   write

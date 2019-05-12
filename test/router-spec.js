@@ -83,8 +83,6 @@ test.serial('should verify correct route', t => {
   router.get('/route', handler)
   router.get('/route/:id', handler)
 
-  // console.log(JSON.stringify(router.verifyRoute('/route', 'GET'), null, '  '));
-
   t.deepEqual(router.verifyRoute('/route', 'GET'), [route])
 })
 
@@ -101,8 +99,6 @@ test.serial('should verify correct route with param', t => {
 
   router.get('/route', handler)
   router.get('/route/:id', handler)
-
-  // console.log(JSON.stringify(router.verifyRoute('/route', 'GET'), null, '  '));
 
   t.deepEqual(router.verifyRoute('/route/10', 'GET'), [route])
 })
