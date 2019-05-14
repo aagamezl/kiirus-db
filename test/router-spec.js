@@ -43,7 +43,7 @@ test.serial('should add post route', t => {
 test.serial('should add multiple routes', t => {
   const handler = (request, response) => {}
   const routes = {
-    ['GET']: [{
+    'GET': [{
       handler,
       params: [],
       path: /^\/route$/,
@@ -54,7 +54,7 @@ test.serial('should add multiple routes', t => {
       path: /^\/route\/([A-Za-z0-9_-]+)$/,
       method: 'GET'
     }],
-    ['DELETE']: [{
+    'DELETE': [{
       handler,
       params: ['id'],
       path: /^\/route\/([A-Za-z0-9_-]+)$/,
@@ -76,7 +76,7 @@ test.serial('should verify correct route', t => {
     handler,
     'params': {},
     'path': /^\/route$/,
-    'method': 'GET',
+    method,
     'query': {}
   }
 
@@ -91,9 +91,9 @@ test.serial('should verify correct route with param', t => {
   const handler = (request, response) => {}
   const route = {
     handler,
-    'params': {'id': '10'},
+    'params': { 'id': '10' },
     'path': /^\/route\/([A-Za-z0-9_-]+)$/,
-    'method': 'GET',
+    method,
     'query': {}
   }
 

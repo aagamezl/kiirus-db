@@ -13,6 +13,30 @@ const DEFAULT_CONFIG = {
 }
 
 /**
+ * Read the body content from the request stream
+ *
+ * @param {IncomingMessage} request
+ * @param {Function} callback
+ */
+const getBody = (request, callback) => {
+  const bodyBuffer = []
+
+  request.on('data', (chunk) => {
+    bodyBuffer.push(chunk)
+  })
+
+  request.on('end', () => {
+    const body = Buffer.concat(bodyBuffer).toString()
+
+    if (request.headers['content-type'] === 'application/json') {
+      return callback(JSON.parse(body))
+    }
+
+    callback(body)
+  })
+}
+
+/**
  *
  * @param {number} [port=DEFAULT_CONFIG.port]
  * @param {string} [host=DEFAULT_CONFIG.host]
@@ -91,7 +115,7 @@ const usage = () => {
     '  -K --key     Path to ssl key file (default: key.pem).',
     '',
     '  -h --help    Print this list and exit.'
-  ].join('\n');
+  ].join('\n')
 }
 
 /**

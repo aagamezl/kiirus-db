@@ -65,15 +65,15 @@ test('should parse shortcut params', t => {
     '--cert',
     'path/to/cert.pem',
     '-K',
-    'path/to/key.pem',
+    'path/to/key.pem'
   ]
 
   const result = {
     p: '3000',
     S: true,
     cert: 'path/to/cert.pem',
-    K: 'path/to/key.pem',
+    K: 'path/to/key.pem'
   }
 
-  t.deepEqual(getParams(params), result);
+  t.deepEqual(getParams(params), result)
 })
