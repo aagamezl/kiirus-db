@@ -8,7 +8,7 @@
  * @returns {array}
  */
 const matchAll = (regex, value) => {
-  let match = undefined
+  let match
   const matches = []
 
   while ((match = regex.exec(value)) !== null) {

@@ -3,7 +3,7 @@
  *
  * @typedef Route
  * @type {Object}
- * @property {Function} handler
+ * @property {Function.<IncomingMessage, ServerResponse>} handler
  * @property {Object.<string, string>} params
  * @property {string} method - The method of the route
  * @property {RegExp} path - The RegEx for the route
@@ -21,7 +21,7 @@ let routes = {}
  *
  * @param {string} method
  * @param {string} path
- * @param {function} handler
+ * @param {Function.<IncomingMessage, ServerResponse>} handler
  */
 const addRoute = (method, path, handler) => {
   const route = {
