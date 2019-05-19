@@ -18,8 +18,36 @@ const lessThanOrEqual = (item, key, value) => {
   return item[key] <= value
 }
 
-const logicalOr = (item, key, value) => {
-  return item[key] <= value
+const logicalAnd = (parsedOperation) => {
+  return (input) => {
+    // copy the array of functions
+    const list = [...parsedOperation]
+
+    let result = true
+    while (list.length > 0) {
+      // take the last function off the end of the list
+      // and execute it
+      result = result & list.shift()( input )
+    }
+
+    return Boolean(result)
+  }
+}
+
+const logicalOr = (parsedOperation) => {
+  return (input) => {
+    // copy the array of functions
+    const list = [...parsedOperation]
+
+    let result = false
+    while (list.length > 0) {
+      // take the last function off the end of the list
+      // and execute it
+      result = result | list.shift()( input )
+    }
+
+    return Boolean(result)
+  }
 }
 
 module.exports = {
@@ -28,5 +56,6 @@ module.exports = {
   greaterThanOrEqual,
   lessThan,
   lessThanOrEqual,
+  logicalAnd,
   logicalOr,
 }

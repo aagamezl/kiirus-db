@@ -20,10 +20,11 @@ const operators = {
     '$nor': '$nor',
   },
   logical: {
-    '$and': '&&',
+    // '$and': '&&',
+    '$and': operations.logicalAnd,
     '$not': '!',
     // '$or': '||',
-    '$or': 'logicalOr',
+    '$or': operations.logicalOr,
   }
 }
 
@@ -50,7 +51,8 @@ const build = (query) => {
 }
 
 const getOperator = (operator) => {
-  return operators.comparision[operator] || operator
+  // return operators.comparision[operator] || operator
+  return operators.comparision[operator] || operators.logical[operator] || operator
 }
 
 /**
@@ -138,36 +140,28 @@ const parseArray = (query, operator, glue) => {
 }
 
 const parseLogical = (item, operator) => {
-  // console.log(item, operators.logical[operator])
-  
-  // operator = operators.logical[operator]
-
-  // return `${recordName}.${key} ${operator} ${value}`
-  // return hof(operator, key, value)
-  const parsedLogical = item.reduce((previous, value) => {
+  const parsedOperation = item.reduce((previous, value) => {
     previous = previous.concat(parse(value))
 
     return previous
   }, [])
 
-  return (item) => {
-    // return operations[type](item, key, value)
-    // console.log(item, parsedLogical, type, key, value)
+  // return operators.logical[operator].apply(null, parsedOperation)
+  return operators.logical[operator](parsedOperation)
 
-    // copy the array of functions
-    const list = [...parsedLogical]
+  // return (item) => {
+  //   // copy the array of functions
+  //   const list = [...parsedLogical]
 
-    let result = 0
-    while (list.length > 0) {
-      // take the last function off the end of the list
-      // and execute it
-      result = result | list.shift()( item )
-    }
+  //   let result = 0
+  //   while (list.length > 0) {
+  //     // take the last function off the end of the list
+  //     // and execute it
+  //     result = result | list.shift()( item )
+  //   }
 
-    return result
-  }
-  
-  // return hof(operator, key, value)
+  //   return result
+  // }
 }
 
 const parseComparation = (item, key, operator) => {
@@ -199,7 +193,7 @@ const pipe = (...functions) => {
     // copy the array of functions
     const list = [...functions]
 
-    let result = 1
+    let result = true
     while (list.length > 0) {
       // take the last function off the end of the list
       // and execute it

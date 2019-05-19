@@ -18,10 +18,19 @@ const data = [
 
 // console.log(data.filter(queryFilter))
 
+// let queryFilter = query.build({
+//   $or: [{ qty: { $gt: 75 } }, { status: 'D' }],
+//   // qty: { $lt: 100 },
+//   // status: 'D'
+// })
+
+// console.log(data.filter(queryFilter))
+
 let queryFilter = query.build({
-  $or: [{ qty: { $gt: 75 } }, { status: 'D' }],
+  // $and: [{ qty: { $gt: 75 } }, { status: 'D' }],
+  $and: [{ qty: { $gt: 25 } }, { qty: { $lt: 75 } }],
   // qty: { $lt: 100 },
-  // status: 'D'
+  status: 'D'
 })
 
 console.log(data.filter(queryFilter))
