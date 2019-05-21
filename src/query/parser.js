@@ -3,28 +3,21 @@ const operations = require('./operations')
 let recordName = 'record'
 
 const operators = {
-  comparision: {
-    // '$eq': '===',
-    '$eq': 'equalTo',
-    // '$gt': '>',
-    '$gt': 'greaterThan',
-    // '$gte': '>=',
-    '$gte': 'greaterThanOrEqual',
+  comparison: {
+    '$eq': '===',
+    '$gt': '>',
+    '$gte': '>=',
     '$in': '$in',
-    // '$lt': '<',
-    '$lt': 'lessThan',
-    // '$lte': '<=',
-    '$lte': 'lessThanOrEqual',
+    '$lt': '<',
+    '$lte': '<=',
     '$ne': '!==',
     '$nin': '$nin',
-    '$nor': '$nor',
   },
   logical: {
-    // '$and': '&&',
-    '$and': operations.logicalAnd,
+    '$and': '&&',
+    '$nor': '!',
     '$not': '!',
-    // '$or': '||',
-    '$or': operations.logicalOr,
+    '$or': '||',
   }
 }
 
@@ -36,186 +29,164 @@ const operators = {
 * @returns {Function}
 */
 const build = (query) => {
-  // const parsedQuery = parse(query)
+  const queryParsed = parse(query).join(` && `)
 
-  // console.log(compose(...[parse(query).reverse()]))
+  console.log(queryParsed)
 
-  // return new Function(recordName, `return ${parse(query).join(` && `)}`)
-  
-  // return compose(...[parse(query).reverse()])
-  return pipe.apply(null, parse(query))
-
-  // return parsedQuery.reduce((previous, current, index) => {
-  //   return current()
-  // })
-}
-
-const getOperator = (operator) => {
-  // return operators.comparision[operator] || operator
-  return operators.comparision[operator] || operators.logical[operator] || operator
+  return new Function(recordName, `return ${queryParsed}`)
 }
 
 /**
- * Returns the record name
  *
- * @return {string}
+ * @param {string} type
+ * @param {string} operator
+ * @returns {string}
  */
-const getRecordName = () => {
-  return recordName
+const getOperator = (type, operator) => {
+  return operators[type][operator]
 }
 
+/**
+ *
+ * @param {*} item
+ * @returns {}
+ */
 const getType = (item) => {
   if (Array.isArray(item)) {
     return 'array'
   } else if (Object.keys(operators.logical).includes(item)) {
     return 'logical'
-  } else if (Object.keys(operators.comparision).includes(item)) {
-    return 'comparision'
+  } else if (Object.keys(operators.comparison).includes(item)) {
+    return 'comparison'
   } else {
     return typeof item
   }
 }
 
-/**
- * Parse a query expression and returns the set of part that compose it
- *
- * @param {Object} query
- * @param {string} operator
- * @param {string} glue
- *
- * @returns {Array}
- */
-const parse = (query, operator = '$eq', glue = '&&') => {
-  let queryFunction = []
+const isComparisonOperator = (operator) => {
+  return operators.comparison[operator] !== undefined
+}
+
+const isLogicalOperator = (operator) => {
+  return operators.logical[operator] !== undefined
+}
+
+const parse = (query, operator = '$eq') => {
+  const queryFunction = []
 
   for (let [key, item] of Object.entries(query)) {
-    // operator = operators.comparision[key] ? key : operator
-    operator = operators.comparision[key] ? key : operators.logical[key] ? key : operator
+    // console.log(key, item)
 
     const type = getType(item)
 
-    switch (type) {
-      case 'array':
-        if (operators.comparision[operator]) {
+    if (isLogicalOperator(key) || isLogicalOperator(Object.keys(item)[0])) {
+      // console.log('logical')
+
+      switch (type) {
+        case 'array':
           queryFunction.push(
-            parseComparation(item, key, operators.comparision[operator])
+            `(${parseLogicalArray(item, key)})`
           )
-        } else {
-          // queryFunction.push(
-          //   `(${parseArray(item, key, operators.logical[key])})`
-          // )
-          // queryFunction = parseArray(item, key, operators.logical[key])
-          // queryFunction = parseArray(item, key, operators.logical[key])
-          queryFunction.push(parseLogical(item, key))
-        }
 
-        break
+          break
 
-      case 'boolean':
-      case 'number':
-      case 'string':
-        queryFunction.push(parseScalar(key, item, operator, type))
+          case 'object':
+            const [queryOperator, queryItem] = Object.entries(item)[0]
+  
+            // The only case for logical operator and type object is for $not
+            queryFunction.push(`!(${parse({ [key]: queryItem }, queryOperator)[0]})`)
+  
+            break
+      }
+    } else { // is comparison operator
+      // console.log('comparison')
 
-        break
 
-      case 'object':
-        const [queryOperator, queryItem] = Object.entries(item)[0]
+      // const operator = getOperator('comparison', )
 
-        queryFunction.push(parse({ [key]: queryItem }, queryOperator)[0])
+      switch (type) {
+        case 'array':
+          queryFunction.push(
+            `(${parseComparisonArray(item, key, operator)})`
+          )
 
-        break
+          break
+        case 'boolean':
+        case 'number':
+        case 'string':
+          queryFunction.push(parseScalar(key, item, operator, type))
+
+          break
+
+        case 'object':
+          const [queryOperator, queryItem] = Object.entries(item)[0]
+
+          queryFunction.push(parse({ [key]: queryItem }, queryOperator)[0])
+
+          break
+      }
     }
   }
 
   return queryFunction
 }
 
-const parseArray = (query, operator, glue) => {
-  // return query.map((value) => {
-  //   return parse(value)
-  // }).join(` ${glue} `)
-  return query.reduce((value) => {
-    return parse(value, operator)
-  })
-}
-
-const parseLogical = (item, operator) => {
-  const parsedOperation = item.reduce((previous, value) => {
-    previous = previous.concat(parse(value))
-
-    return previous
-  }, [])
-
-  // return operators.logical[operator].apply(null, parsedOperation)
-  return operators.logical[operator](parsedOperation)
-
-  // return (item) => {
-  //   // copy the array of functions
-  //   const list = [...parsedLogical]
-
-  //   let result = 0
-  //   while (list.length > 0) {
-  //     // take the last function off the end of the list
-  //     // and execute it
-  //     result = result | list.shift()( item )
-  //   }
-
-  //   return result
-  // }
-}
-
-const parseComparation = (item, key, operator) => {
+/**
+ * 
+ * @param {Array} item 
+ * @param {string} key 
+ * @param {string} operator 
+ * @returns {string}
+ */
+const parseComparisonArray = (item, key, operator) => {
   switch (operator) {
     case '$in':
       return `[${item.join(', ')}].includes(${recordName}.${key})`
 
     case '$nin':
       return `![${item.join(', ')}].includes(${recordName}.${key})`
-
-    case '$nor':
-      return `!(${parseArray(item, key, '||')})`
   }
 }
 
+/**
+ *
+ * @param {Array} query
+ * @param {string} operator
+ * @param {string} glue
+ * @returns {string}
+ */
+const parseLogicalArray = (query, operator) => {
+  if (operator === '$nor') {
+    return `!(${query.map((value) => {
+      return parse(value)
+    }).join(' || ')})`
+  }
+
+  operator = getOperator('logical', operator)
+
+  return query.map((value) => {
+    return parse(value)
+  }).join(` ${operator} `)
+}
+
+/**
+ *
+ * @param {string} key
+ * @param {string} value
+ * @param {string} operator
+ * @param {string} type
+ * @returns {string}
+ */
 const parseScalar = (key, value, operator, type) => {
-  // if (type === 'string') {
-  //   value = `'${value}'`
-  // }
-
-  operator = getOperator(operator)
-
-  // return `${recordName}.${key} ${operator} ${value}`
-  return hof(operator, key, value)
-}
-
-const pipe = (...functions) => {
-  return (input) => {
-    // copy the array of functions
-    const list = [...functions]
-
-    let result = true
-    while (list.length > 0) {
-      // take the last function off the end of the list
-      // and execute it
-      result = result & list.shift()( input )
-    }
-
-    return Boolean(result)
+  if (type === 'string') {
+    value = `'${value}'`
   }
-}
 
-const setRecordName = (name = 'record') => {
-  recordName = name
-}
+  operator = getOperator('comparison', operator)
 
-const hof = (type, key, value) => {
-  return (item) => {
-    return operations[type](item, key, value)
-  }
+  return `${recordName}.${key} ${operator} ${value}`
 }
 
 module.exports = {
-  build,
-  getRecordName,
-  setRecordName
+  build
 }

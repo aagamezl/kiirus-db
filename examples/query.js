@@ -12,47 +12,103 @@ const data = [
 
 // let queryFilter = query.build({
 //   qty: { $gt: 50 },
-//   qty: { $lt: 100 },
+// })
+
+// console.log(data.filter(queryFilter))
+
+// queryFilter = query.build({
+//   qty: 50
+// })
+
+// console.log(data.filter(queryFilter))
+
+// queryFilter = query.build({
+//   qty: { $gt: 50 },
+//   item: 'paper'
+// })
+
+// console.log(data.filter(queryFilter))
+
+// queryFilter = query.build({
+//   qty: { $lte: 50 },
+// })
+
+// console.log(data.filter(queryFilter))
+
+// queryFilter = query.build({
+//   qty: { $in: [50, 75] },
+// })
+
+// console.log(data.filter(queryFilter))
+
+// queryFilter = query.build({
+//   qty: { $nin: [50, 75] },
+// })
+
+// console.log(data.filter(queryFilter))
+
+// queryFilter = query.build({
+//   $and: [ { qty: { $ne: 25 } }, { status: { $eq: 'A' } } ]
+// })
+
+// console.log(data.filter(queryFilter))
+
+// queryFilter = query.build({
+//   $or: [ { qty: { $ne: 25 } }, { status: { $eq: 'D' } } ]
+// })
+
+// console.log(data.filter(queryFilter))
+
+// queryFilter = query.build({
+//   $or: [ { qty: { $ne: 25 } }, { status: { $eq: 'D' } } ],
+//   $and: [ { qty: { $ne: 25 } }, { status: { $eq: 'A' } } ]
+// })
+
+// console.log(data.filter(queryFilter))
+
+// queryFilter = query.build({
+//   price: { $not: { $gt: 1.99 } }
+// })
+
+// console.log(data.filter(queryFilter))
+
+// queryFilter = query.build({
+//   qty: { $gt: 50 },
+//   'size.h': { $gt: 22 },
 //   status: 'D'
 // })
 
 // console.log(data.filter(queryFilter))
 
-// let queryFilter = query.build({
+// queryFilter = query.build({
 //   $or: [{ qty: { $gt: 75 } }, { status: 'D' }],
-//   // qty: { $lt: 100 },
-//   // status: 'D'
+//   qty: { $lt: 100 },
 // })
 
 // console.log(data.filter(queryFilter))
 
-let queryFilter = query.build({
-  // $and: [{ qty: { $gt: 75 } }, { status: 'D' }],
-  $and: [{ qty: { $gt: 25 } }, { qty: { $lt: 75 } }],
-  // qty: { $lt: 100 },
-  status: 'D'
+// queryFilter = query.build({
+//   $and: [{ qty: { $gt: 25 } }, { qty: { $lte: 75 } }],
+//   $or: [{ qty: { $gt: 75 } }, { status: 'D' }],
+//   status: 'D'
+// })
+
+// console.log(data.filter(queryFilter))
+
+// queryFilter = query.build({
+//   qty: { $not: { $gt: 75 } }
+// })
+
+// console.log(data.filter(queryFilter))
+
+// queryFilter = query.build({
+//   price: { $not: { $gte: 1.99 } }
+// })
+
+// console.log(data.filter(queryFilter))
+
+queryFilter = query.build({
+  $nor: [{ qty: { $gt: 25 } }, { status: { $eq: 'D' } }],
 })
 
 console.log(data.filter(queryFilter))
-
-// const equal = (item, key, value) => {
-//   return item[key] === value
-// }
-
-// const lessThan = (item, key, value) => {
-//   return item[key] < value
-// }
-
-// const operations = {
-//   equal,
-//   lessThan
-// }
-
-// const hof = (type, key, value) => {
-//   return (item) => {
-//       return operations[type](item, key, value)
-//   }
-// }
-
-// console.log(data.filter(hof('equal', 'qty', 50)))
-// console.log(data.filter(hof('lessThan', 'qty', 50)))
