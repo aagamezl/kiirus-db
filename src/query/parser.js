@@ -29,11 +29,19 @@ const operators = {
 * @returns {Function}
 */
 const build = (query) => {
-  const queryParsed = parse(query).join(` && `)
+  return new Function(recordName, `return ${parse(query).join(` && `)}`)
+}
 
-  console.log(queryParsed)
-
-  return new Function(recordName, `return ${queryParsed}`)
+/**
+ * 
+ * @param {array} item 
+ * @param {string} key
+ * @returns {string} 
+ */
+const buildComparisonArray = (item, key) => {
+  return `[${item.map((element) => {
+    return getType(element) === 'string' ? `'${element}'` : element
+  })}].includes(${recordName}.${key})`
 }
 
 /**
@@ -63,29 +71,41 @@ const getType = (item) => {
   }
 }
 
+/**
+ * 
+ * @param {string} operator 
+ * @returns {boolean}
+ */
 const isComparisonOperator = (operator) => {
   return operators.comparison[operator] !== undefined
 }
 
+/**
+ * 
+ * @param {string} operator 
+ * @returns {boolean}
+ */
 const isLogicalOperator = (operator) => {
   return operators.logical[operator] !== undefined
 }
 
+/**
+ * 
+ * @param {*} query 
+ * @param {string} operator 
+ * @returns {Array}
+ */
 const parse = (query, operator = '$eq') => {
   const queryFunction = []
 
   for (let [key, item] of Object.entries(query)) {
-    // console.log(key, item)
-
     const type = getType(item)
 
     if (isLogicalOperator(key) || isLogicalOperator(Object.keys(item)[0])) {
-      // console.log('logical')
-
       switch (type) {
         case 'array':
           queryFunction.push(
-            `(${parseLogicalArray(item, key)})`
+            `${parseLogicalArray(item, key)}`
           )
 
           break
@@ -99,15 +119,10 @@ const parse = (query, operator = '$eq') => {
             break
       }
     } else { // is comparison operator
-      // console.log('comparison')
-
-
-      // const operator = getOperator('comparison', )
-
       switch (type) {
         case 'array':
           queryFunction.push(
-            `(${parseComparisonArray(item, key, operator)})`
+            `${parseComparisonArray(item, key, operator)}`
           )
 
           break
@@ -141,10 +156,10 @@ const parse = (query, operator = '$eq') => {
 const parseComparisonArray = (item, key, operator) => {
   switch (operator) {
     case '$in':
-      return `[${item.join(', ')}].includes(${recordName}.${key})`
+      return buildComparisonArray(item, key)
 
     case '$nin':
-      return `![${item.join(', ')}].includes(${recordName}.${key})`
+      return `!${buildComparisonArray(item, key)}`
   }
 }
 
@@ -164,9 +179,9 @@ const parseLogicalArray = (query, operator) => {
 
   operator = getOperator('logical', operator)
 
-  return query.map((value) => {
+  return `(${query.map((value) => {
     return parse(value)
-  }).join(` ${operator} `)
+  }).join(` ${operator} `)})`
 }
 
 /**
