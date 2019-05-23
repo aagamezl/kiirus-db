@@ -12,11 +12,11 @@ The the records is stored using AES *(Ths feature is in the roadmap, but first I
 - [X] Implement nodemon.
 - [X] Add an editor config file.
 - [ ] Write test cases.
-- [ ] Create custom router for HTTP server.
-- [ ] Create a Storage module to manage the filesystem database operations.
+- [X] Create custom router for HTTP server.
+- [X] Create a Storage module to manage the filesystem database operations.
 - [X] Create a HTTP server to start the database and to receive requests.
 - [ ] Create a HTTP client to connect the database server and to perform operations.
 - [ ] Use HTTPS for client/server communication.
-- [ ] Build a sintax to make querys, update and delete operations.
+- [ ] Build a sintax parser to make crud operations.
 - [ ] Implement database encryption.
 - [ ] Benchmark the database performance.

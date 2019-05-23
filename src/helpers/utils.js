@@ -24,6 +24,22 @@ const matchAll = (regex, value) => {
   return matches
 }
 
+const compose = (...functions) => {
+  return (result) => {
+    // copy the array of functions
+    const list = [...functions]
+
+    while (list.length > 0) {
+      // take the last function off the end of the list
+      // and execute it
+      result = list.pop()( result )
+    }
+
+    return result
+  }
+}
+
 module.exports = {
+  compose,
   matchAll
 }
