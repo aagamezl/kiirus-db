@@ -1,5 +1,3 @@
-const operations = require('./operations')
-
 let recordName = 'record'
 
 const operators = {
@@ -11,13 +9,13 @@ const operators = {
     '$lt': '<',
     '$lte': '<=',
     '$ne': '!==',
-    '$nin': '$nin',
+    '$nin': '$nin'
   },
   logical: {
     '$and': '&&',
     '$nor': '!',
     '$not': '!',
-    '$or': '||',
+    '$or': '||'
   }
 }
 
@@ -29,14 +27,14 @@ const operators = {
 * @returns {Function}
 */
 const build = (query) => {
-  return new Function(recordName, `return ${parse(query).join(` && `)}`)
+  return new Function(recordName, `return ${parse(query).join(` && `)}`) // eslint-disable-line
 }
 
 /**
- * 
- * @param {array} item 
+ *
+ * @param {array} item
  * @param {string} key
- * @returns {string} 
+ * @returns {string}
  */
 const buildComparisonArray = (item, key) => {
   return `[${item.map((element) => {
@@ -72,17 +70,8 @@ const getType = (item) => {
 }
 
 /**
- * 
- * @param {string} operator 
- * @returns {boolean}
- */
-const isComparisonOperator = (operator) => {
-  return operators.comparison[operator] !== undefined
-}
-
-/**
- * 
- * @param {string} operator 
+ *
+ * @param {string} operator
  * @returns {boolean}
  */
 const isLogicalOperator = (operator) => {
@@ -90,9 +79,9 @@ const isLogicalOperator = (operator) => {
 }
 
 /**
- * 
- * @param {*} query 
- * @param {string} operator 
+ *
+ * @param {*} query
+ * @param {string} operator
  * @returns {Array}
  */
 const parse = (query, operator = '$eq') => {
@@ -110,13 +99,13 @@ const parse = (query, operator = '$eq') => {
 
           break
 
-          case 'object':
-            const [queryOperator, queryItem] = Object.entries(item)[0]
-  
-            // The only case for logical operator and type object is for $not
-            queryFunction.push(`!(${parse({ [key]: queryItem }, queryOperator)[0]})`)
-  
-            break
+        case 'object':
+          const [queryOperator, queryItem] = Object.entries(item)[0]
+
+          // The only case for logical operator and type object is for $not
+          queryFunction.push(`!(${parse({ [key]: queryItem }, queryOperator)[0]})`)
+
+          break
       }
     } else { // is comparison operator
       switch (type) {
@@ -147,10 +136,10 @@ const parse = (query, operator = '$eq') => {
 }
 
 /**
- * 
- * @param {Array} item 
- * @param {string} key 
- * @param {string} operator 
+ *
+ * @param {Array} item
+ * @param {string} key
+ * @param {string} operator
  * @returns {string}
  */
 const parseComparisonArray = (item, key, operator) => {

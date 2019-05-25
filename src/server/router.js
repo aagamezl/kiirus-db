@@ -12,7 +12,7 @@
 
 const url = require('url')
 
-const { matchAll } = require('./helpers/utils')
+const { matchAll } = require('../support/utils')
 
 /** @type {Object.<string, Route>} */
 let routes = {}

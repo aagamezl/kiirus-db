@@ -1,6 +1,7 @@
 const http = require('http')
 
-const router = require('./Router')
+const Response = require('./Response')
+const router = require('./router')
 
 /**
  * @type {Object}
@@ -65,7 +66,7 @@ const requestHandler = (request, response) => {
   const routes = router.verifyRoute(request.url, request.method)
 
   if (routes.length === 0) {
-    write(response, '', 404)
+    new Response(response).send('', 404)
 
     return
   }
@@ -77,7 +78,7 @@ const requestHandler = (request, response) => {
     switch (request.method) {
       case 'DELETE':
       case 'GET':
-        route.handler(request, response)
+        route.handler(request, new Response(response))
 
         break
 
@@ -87,7 +88,7 @@ const requestHandler = (request, response) => {
         getBody(request, (body) => {
           request.body = body
 
-          route.handler(request, response)
+          route.handler(request, new Response(response))
         })
 
         break
@@ -118,23 +119,8 @@ const usage = () => {
   ].join('\n')
 }
 
-/**
- *
- * @param {ServerResponse} response
- * @param {string} data
- * @param {number} [statusCode=200]
- * @param {string} [contentType='application/json']
- */
-const write = (response, data, statusCode = 200, contentType = 'application/json') => {
-  response.setHeader('Content-Type', contentType)
-  response.writeHead(statusCode)
-  response.write(data)
-  response.end()
-}
-
 module.exports = {
   listen,
   ...router,
-  usage,
-  write
+  usage
 }

@@ -11,7 +11,10 @@
     "watch": "nodemon --watch src server.js"
   },
   "nodemonConfig": {
-    "ignore": ["test/*", "docs/*"],
+    "ignore": [
+      "test/*",
+      "docs/*"
+    ],
     "delay": "2500"
   },
   "bin": {

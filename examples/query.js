@@ -3,20 +3,20 @@
 const query = require('./../src/query/parser')
 
 const data = [
-  { item: "canvas", qty: 100, size: { h: 28, w: 35.5, uom: "cm" }, status: "A" },
-  { item: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A" },
-  { item: "mat", qty: 85, size: { h: 27.9, w: 35.5, uom: "cm" }, status: "A" },
-  { item: "mousepad", qty: 25, size: { h: 19, w: 22.85, uom: "cm" }, status: "P" },
-  { item: "notebook", qty: 50, size: { h: 8.5, w: 11, uom: "in" }, status: "P" },
-  { item: "paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D" },
-  { item: "planner", qty: 75, size: { h: 22.85, w: 30, uom: "cm" }, status: "D" },
-  { item: "postcard", qty: 45, size: { h: 10, w: 15.25, uom: "cm" }, status: "A" },
-  { item: "sketchbook", qty: 80, size: { h: 14, w: 21, uom: "cm" }, status: "A" },
-  { item: "sketch pad", qty: 95, size: { h: 22.85, w: 30.5, uom: "cm" }, status: "A" }
+  { item: 'canvas', qty: 100, size: { h: 28, w: 35.5, uom: 'cm' }, status: 'A' },
+  { item: 'journal', qty: 25, size: { h: 14, w: 21, uom: 'cm' }, status: 'A' },
+  { item: 'mat', qty: 85, size: { h: 27.9, w: 35.5, uom: 'cm' }, status: 'A' },
+  { item: 'mousepad', qty: 25, size: { h: 19, w: 22.85, uom: 'cm' }, status: 'P' },
+  { item: 'notebook', qty: 50, size: { h: 8.5, w: 11, uom: 'in' }, status: 'P' },
+  { item: 'paper', qty: 100, size: { h: 8.5, w: 11, uom: 'in' }, status: 'D' },
+  { item: 'planner', qty: 75, size: { h: 22.85, w: 30, uom: 'cm' }, status: 'D' },
+  { item: 'postcard', qty: 45, size: { h: 10, w: 15.25, uom: 'cm' }, status: 'A' },
+  { item: 'sketchbook', qty: 80, size: { h: 14, w: 21, uom: 'cm' }, status: 'A' },
+  { item: 'sketch pad', qty: 95, size: { h: 22.85, w: 30.5, uom: 'cm' }, status: 'A' }
 ]
 
 let queryFilter = query.build({
-  qty: { $gt: 50 },
+  qty: { $gt: 50 }
 })
 
 console.log(data.filter(queryFilter))
@@ -35,19 +35,19 @@ queryFilter = query.build({
 console.log(data.filter(queryFilter))
 
 queryFilter = query.build({
-  qty: { $lte: 50 },
+  qty: { $lte: 50 }
 })
 
 console.log(data.filter(queryFilter))
 
 queryFilter = query.build({
-  qty: { $in: [50, 75] },
+  qty: { $in: [50, 75] }
 })
 
 console.log(data.filter(queryFilter))
 
 queryFilter = query.build({
-  qty: { $nin: [50, 75] },
+  qty: { $nin: [50, 75] }
 })
 
 console.log(data.filter(queryFilter))
@@ -87,7 +87,7 @@ console.log(data.filter(queryFilter))
 
 queryFilter = query.build({
   $or: [{ qty: { $gt: 75 } }, { status: 'D' }],
-  qty: { $lt: 100 },
+  qty: { $lt: 100 }
 })
 
 console.log(data.filter(queryFilter))
@@ -113,7 +113,7 @@ queryFilter = query.build({
 console.log(data.filter(queryFilter))
 
 queryFilter = query.build({
-  $nor: [{ qty: { $gt: 25 } }, { status: { $eq: 'D' } }],
+  $nor: [{ qty: { $gt: 25 } }, { status: { $eq: 'D' } }]
 })
 
 console.log(data.filter(queryFilter))

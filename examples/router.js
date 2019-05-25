@@ -1,6 +1,6 @@
 const router = require('./src/Router')
 
-  const handler = () => {}
+const handler = () => {}
 
 console.log(router.getRoutes())
 

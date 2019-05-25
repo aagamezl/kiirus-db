@@ -1,11 +1,20 @@
+const { storage } = require('./storage')
+
+const getConfig = () => {
+  if (storage.exists('./kiirus-db.config', true)) {
+    return storage.readJson('./kiirus-db.config', true)
+  } else {
+    throw new Error('[Critical]: Config file is not available.')
+  }
+}
+
 /**
  * Perform a global regular expression match. Searches subject for all
  * matches to the regular expression given in pattern and return them.
  *
- * @static
- * @param {object} regex
+ * @param {Object} regex
  * @param {*} value
- * @returns {array}
+ * @returns {Array}
  */
 const matchAll = (regex, value) => {
   let match
@@ -32,7 +41,7 @@ const compose = (...functions) => {
     while (list.length > 0) {
       // take the last function off the end of the list
       // and execute it
-      result = list.pop()( result )
+      result = list.pop()(result)
     }
 
     return result
@@ -41,5 +50,7 @@ const compose = (...functions) => {
 
 module.exports = {
   compose,
-  matchAll
+  getConfig,
+  matchAll,
+  storage
 }
