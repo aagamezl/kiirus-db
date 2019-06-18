@@ -7,8 +7,11 @@ const database = 'test-database'
 const client = new Client(host, port)
 const db = client.db(database)
 
-db.users.find({
-  $and: [ { qty: { $ne: 25 } }, { status: { $eq: 'A' } } ]
+db.users.update({
+  item: 'journal'
+}, {
+  'size.uom': 'in',
+  status: 'P'
 }).then((result) => {
   console.log(result)
 }).catch((error) => {

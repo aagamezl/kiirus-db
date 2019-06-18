@@ -7,8 +7,8 @@ const database = 'test-database'
 const client = new Client(host, port)
 const db = client.db(database)
 
-db.users.find({
-  $and: [ { qty: { $ne: 25 } }, { status: { $eq: 'A' } } ]
+db.users.delete({
+  'size.uom': 'in'
 }).then((result) => {
   console.log(result)
 }).catch((error) => {

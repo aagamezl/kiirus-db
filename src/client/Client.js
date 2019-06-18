@@ -14,9 +14,6 @@ class Client {
   async send (data, contentType = 'application/json') {
     const url = `${this.host}:${this.port}`
     const options = {
-      // hostname: this.host,
-      // port: this.port,
-      // path: '/',
       method: 'POST',
       headers: {
         'Content-Type': contentType,

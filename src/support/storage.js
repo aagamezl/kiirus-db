@@ -104,10 +104,6 @@ const readDir = (pathname, sync = false, encoding = 'utf8') => {
  * @returns {Promise<string|NodeJS.ErrnoException>}
  */
 const readFile = (pathname, sync = false, encoding = 'utf8') => {
-  // if (sync) {
-  //   return fs.readFileSync(pathname, encoding)
-  // }
-
   if (sync) {
     try {
       return Promise.resolve(fs.readFileSync(pathname, encoding))

@@ -1,6 +1,6 @@
 // https://docs.mongodb.com/manual/reference/operator/query/or/
 
-const query = require('./../src/query/parser')
+const query = require('../../src/query/parser')
 
 const data = [
   { item: 'canvas', qty: 100, size: { h: 28, w: 35.5, uom: 'cm' }, status: 'A' },

@@ -12,10 +12,7 @@ module.exports = [{
     const { command, options } = request.body
     const [ type, operation ] = command.split('-')
 
-    // console.log('command: %s, options: %o', command, options)
     console.log('type: %s, operation: %s', type, operation)
-
-    // response.send(JSON.stringify(request.body))
 
     switch (type) {
       case 'collection':

@@ -3,7 +3,7 @@ const path = require('path')
 
 const { Config } = require('./../support')
 const queryParser = require('./../query/parser')
-const { storage } = require('./../support')
+const { storage, utils } = require('./../support')
 
 class Collection {
   /**
@@ -14,11 +14,9 @@ class Collection {
    */
   constructor (database, name) {
     this.config = Config.getInstance().values
-    console.log('config: %o', this.config)
-
     this.database = database
-    this.queryParser = queryParser
     this.name = name
+    this.queryParser = queryParser
   }
 
   /**
@@ -41,6 +39,33 @@ class Collection {
    */
   decipher (data) {
     return data
+  }
+
+  /**
+   * Delete one or many records from the collection using a query
+   *
+   * @param {function|string} query
+   *
+   * @return Promise<boolean>
+   */
+  async delete (query) {
+    try {
+      const records = await this.find(query)
+      const pathname = this.getPath()
+
+      const response = []
+      for (let record of records) {
+        const result = await storage.deleteFile(path.join(pathname, record._id + '.json'))
+
+        if (result) {
+          response.push(record._id)
+        }
+      }
+
+      return response
+    } catch (e) {
+      return Promise.reject(e.message)
+    }
   }
 
   /**
@@ -122,27 +147,76 @@ class Collection {
 
     await this.init(pathname)
 
-    // const exists = await storage.exists(pathname)
-
-    // if (exists) {
-    //   return this.write(pathname, data)
-    // } else {
-    //   return storage.createDir(pathname).then((result) => {
-    //     return this.write(pathname, data)
-    //   }).catch((error) => {
-    //     return error
-    //   })
-    // }
-
-    // try {
     return this.write(pathname, data)
-    // } catch (error) {
-    //   return storage.createDir(pathname).then((result) => {
-    //     return this.write(pathname, data)
-    //   }).catch((error) => {
-    //     return error
+  }
+
+  /**
+   * Update a collection using a query to select the records to update and a
+   * update object, containing the key and values to be updated
+   *
+   * @param {function|object} query
+   * @param {object} update
+   *
+   * @return {Promise<array>}
+   */
+  async update ({ query, update }) {
+    const records = await this.find(query)
+
+    try {
+      const response = []
+
+      for (let record of records) {
+        for (const [key, value] of Object.entries(update)) {
+          utils.setValue(record, key, value)
+        }
+
+        const pathname = path.join(
+          this.getPath(),
+          record._id + '.json'
+        )
+
+        const result = await storage.writeJson(pathname, record)
+
+        if (result) {
+          response.push(record._id)
+        }
+      }
+
+      return response
+      // return records.filter(async (record) => {
+      //   for (const [key, value] of Object.entries(update)) {
+      //     utils.setValue(record, key, value)
+      //   }
+
+      //   const pathname = path.join(
+      //     this.getPath(),
+      //     record._id + '.json'
+      //   )
+
+      //   const result = await storage.writeJson(pathname, record)
+
+      //   return result
+      // })
+    } catch (e) {
+      return Promise.reject(e.message)
+    }
+
+    // return this.find(query).then((records) => {
+    //   return records.map((record) => {
+    //     for (const [key, value] of Object.entries(update)) {
+    //       setValue(record, key, value)
+    //     }
+
+    //     const pathname = path.join(
+    //       this._getPath(),
+    //       record._id + '.json'
+    //     )
+
+    //     storage.writeFile(pathname, JSON.stringify(record))
+
+    //     return record
     //   })
-    // }
+    // })
   }
 
   /**
@@ -154,7 +228,7 @@ class Collection {
    * @return {Promise<array>}
    */
   async write (collection, data) {
-    const promises = []
+    const response = []
 
     for (const record of data) {
       // TODO: Verify if the record come with a _id, if the record have a _id,
@@ -174,22 +248,11 @@ class Collection {
       )
 
       if (result) {
-        promises.push(record._id)
+        response.push(record._id)
       }
-
-      // promises.push(
-      //   storage.writeFile(
-      //     path.join(collection, record._id + '.json'),
-      //     this.cipher(JSON.stringify(record))/* ,
-      //     () => {
-      //       return record._id
-      //     } */
-      //   )
-      // )
     }
 
-    // return Promise.all(promises)
-    return promises
+    return response
   }
 }
 

@@ -121,6 +121,11 @@ const setRoutes = (newRoutes) => {
 const verifyRoute = (path, method) => {
   const parsedUrl = url.parse(path, true)
 
+  // If the method don't exist in the router return empty routes
+  if (!routes[method]) {
+    return []
+  }
+
   return routes[method].reduce((routes, route) => {
     let match = parsedUrl.pathname.match(route.path)
 

@@ -1,7 +1,5 @@
 const helpers = require('./../client/helpers')
 
-console.log(helpers)
-
 const collection = (targetObject) => {
   return new Proxy(targetObject, {
     get (target, property, receiver) {
