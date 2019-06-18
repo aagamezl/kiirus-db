@@ -2,21 +2,22 @@
 
 The command signature is:
 
-```
+```json
 {
-  command: "type-operation",
-  options: {}
+  "command": "type-operation",
+  "options": {...}
 }
 ```
 
-For example:
+## Insert Command:
 
-```
+```json
 {
   "command": "collection-insert",
   "options": {
-    "database": "test-database","collection": "users",
-    "data": [...]
+    "database": "test-database",
+    "collection": "users",
+    "data": [...] | {...}
   }
 }
 ```

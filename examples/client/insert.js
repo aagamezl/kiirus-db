@@ -1,6 +1,6 @@
 const { Client } = require('./../../src/client')
 
-const host = 'localhost'
+const host = 'http://localhost'
 const port = 8008
 const database = 'test-database'
 
@@ -14,7 +14,7 @@ db.users.insert([
   { item: 'planner', qty: 75, size: { h: 22.85, w: 30, uom: 'cm' }, status: 'D' },
   { item: 'postcard', qty: 45, size: { h: 10, w: 15.25, uom: 'cm' }, status: 'A' }
 ]).then((result) => {
-  console.log(result)
+  console.log('result: %o', result)
 }).catch((error) => {
   console.log(error)
 })

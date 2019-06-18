@@ -74,6 +74,26 @@ const deleteFile = (pathname) => {
   })
 }
 
+const readDir = (pathname, sync = false, encoding = 'utf8') => {
+  if (sync) {
+    try {
+      return Promise.resolve(fs.readdir(pathname))
+    } catch (error) {
+      return Promise.reject(error)
+    }
+  }
+
+  return new Promise((resolve, reject) => {
+    fs.readdir(pathname, { encoding }, (error, data) => {
+      if (error) {
+        reject(error)
+      }
+
+      resolve(data)
+    })
+  })
+}
+
 /**
  * Read a file from the filesystem, optionally the file can be synchronously
  *
@@ -116,7 +136,8 @@ const readFile = (pathname, sync = false, encoding = 'utf8') => {
  * @returns {Promsie<object|NodeJS.ErrnoException>}
  */
 const readJson = async (pathname, sync = false) => {
-  return JSON.parse(await readFile(pathname, sync))
+  const data = await readFile(pathname, sync)
+  return JSON.parse(data)
 }
 
 /**
@@ -139,9 +160,18 @@ const writeFile = (pathname, content, sync = false, encoding = 'utf8', mode = 0o
   }
 
   return new Promise((resolve, reject) => {
-    fs.writeFile(pathname, content, { encoding, mode }, (error) => {
+    fs.writeFile(pathname, content, { encoding, mode }, async (error) => {
       if (error) {
         reject(error)
+        // if (error.code === 'ENOENT') {
+        //   try {
+        //     await createDir(path.dirname(pathname))
+
+        //     writeFile(pathname, content, sync, encoding, mode)
+        //   } catch (error) {
+        //     reject(error)
+        //   }
+        // }
       }
 
       resolve(true)
@@ -167,6 +197,7 @@ module.exports = {
   createDir,
   deleteDir,
   deleteFile,
+  readDir,
   readFile,
   readJson,
   writeFile,

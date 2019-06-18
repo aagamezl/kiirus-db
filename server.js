@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const { Config } = require('./src/support')
 const { server } = require('./src/server')
 const { cli } = require('./src/support')
 const routes = require('./src/routes')
@@ -11,6 +12,8 @@ if (params.help || params.h) {
 
   process.exit()
 }
+
+Config.getInstance()
 
 server.listen(params.port || params.p, params.host || params.H)
 

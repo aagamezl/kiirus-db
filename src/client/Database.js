@@ -1,5 +1,5 @@
 const Collection = require('./Collection')
-const { SimpleTarget } = require('./../proxies')
+const { SimpleTarget } = require('../proxies')
 
 class Database {
   constructor (name, client) {

@@ -1,6 +1,6 @@
-const https = require('https')
+const http = require('http')
 
-const Response = require('./')
+const Response = require('./Response')
 
 /**
  *
@@ -8,9 +8,9 @@ const Response = require('./')
  * @param {object} [options]
  * @returns {Promise<Response>}
  */
-const fetch = (options = {}) => {
+const fetch = (url, options = {}, body = undefined) => {
   return new Promise((resolve, reject) => {
-    https.request(options, (response) => {
+    const request = http.request(url, options, (response) => {
       let data = ''
 
       // A chunk of data has been recieved.
@@ -22,9 +22,18 @@ const fetch = (options = {}) => {
       response.on('end', () => {
         resolve(new Response(data, url, response))
       })
-    }).on('error', (error) => {
+    })
+
+    request.on('error', (error) => {
       reject(error.message)
     })
+
+    if (body) {
+      // Write data to request body
+      request.write(body)
+    }
+
+    request.end()
   })
 }
 

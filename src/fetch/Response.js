@@ -8,9 +8,9 @@ class Response {
    */
   constructor (body, url, response) {
     this.body = body
-
-    this.statusCode = response.statusCode
-    this.headers = response.headers
+    // this.headers = response.headers
+    // this.statusCode = response.statusCode
+    this.base = response
     this.url = url
   }
 

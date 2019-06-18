@@ -1,11 +1,14 @@
-const { storage } = require('./storage')
+const storage = require('./storage')
 
 const getConfig = () => {
-  if (storage.exists('./kiirus-db.config', true)) {
+  // if (storage.exists('./kiirus-db.config', true)) {
+  try {
     return storage.readJson('./kiirus-db.config', true)
-  } else {
+  } catch (error) {
     throw new Error('[Critical]: Config file is not available.')
   }
+  // } else {
+  // }
 }
 
 /**

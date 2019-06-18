@@ -12,10 +12,11 @@ class Client {
   }
 
   async send (data, contentType = 'application/json') {
+    const url = `${this.host}:${this.port}`
     const options = {
-      hostname: this.host,
-      port: this.port,
-      path: '/',
+      // hostname: this.host,
+      // port: this.port,
+      // path: '/',
       method: 'POST',
       headers: {
         'Content-Type': contentType,
@@ -23,7 +24,8 @@ class Client {
       }
     }
 
-    const response = await fetch(options)
+    const response = await fetch(url, options, data)
+    return response.json()
   }
 }
 

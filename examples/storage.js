@@ -1,6 +1,12 @@
-const storage = require('../src/Storage')
+const { storage } = require('../src/support')
 
 ;(async () => {
+  // write to a file that don't exists
+  const filename = './data/db/test-database/users/ba1d1bf04095fb5cffce64e0b4ce5fa780e7f8fe.json'
+  storage.writeFile(filename, 'foo file content').then((result) => {
+    console.log(result)
+  })
+
   console.log(await storage.createDir('./foo/bar/bas', true, 0o777))
 
   storage.writeFile('./foo/foo.txt', 'foo file content').then((result) => {

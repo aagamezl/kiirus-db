@@ -4,7 +4,7 @@ const simpleTarget = (targetObject, defaultFunction = undefined) => {
       if (Reflect.has(target, property)) {
         return Reflect.get(target, property)
       } else if (defaultFunction !== undefined) {
-        return target[defaultFunction].call(target, property)
+        return target[defaultFunction](property)
       }
     },
     getPrototypeOf (target) {
@@ -13,4 +13,4 @@ const simpleTarget = (targetObject, defaultFunction = undefined) => {
   })
 }
 
-module.exports = simpleTarget
+module.exports = exports = simpleTarget
