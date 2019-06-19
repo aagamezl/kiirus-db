@@ -1,4 +1,4 @@
-const { Client } = require('./../../src/client')
+const { Client } = require('../../../src/client')
 
 const host = 'http://localhost'
 const port = 8008

@@ -1,5 +1,20 @@
 const storage = require('./storage')
 
+const compose = (...functions) => {
+  return (result) => {
+    // copy the array of functions
+    const list = [...functions]
+
+    while (list.length > 0) {
+      // take the last function off the end of the list
+      // and execute it
+      result = list.pop()(result)
+    }
+
+    return result
+  }
+}
+
 const getConfig = () => {
   // if (storage.exists('./kiirus-db.config', true)) {
   try {
@@ -34,21 +49,6 @@ const matchAll = (regex, value) => {
   }
 
   return matches
-}
-
-const compose = (...functions) => {
-  return (result) => {
-    // copy the array of functions
-    const list = [...functions]
-
-    while (list.length > 0) {
-      // take the last function off the end of the list
-      // and execute it
-      result = list.pop()(result)
-    }
-
-    return result
-  }
 }
 
 /**

@@ -22,6 +22,7 @@ class Client {
     }
 
     const response = await fetch(url, options, data)
+
     return response.json()
   }
 }

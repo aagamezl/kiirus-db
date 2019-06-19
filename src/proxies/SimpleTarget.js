@@ -1,3 +1,11 @@
+/**
+ * Create a Proxy for Database
+ *
+ * @param {object} oldPath
+ * @param {function} newPath
+ *
+ * @returns {Promsie<boolean|NodeJS.ErrnoException>}
+ */
 const simpleTarget = (targetObject, defaultFunction = undefined) => {
   return new Proxy(targetObject, {
     get (target, property, receiver) {

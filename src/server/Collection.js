@@ -63,8 +63,29 @@ class Collection {
       }
 
       return response
-    } catch (e) {
-      return Promise.reject(e.message)
+    } catch (error) {
+      return Promise.reject(error)
+    }
+  }
+
+  async drop (pathname) {
+    try {
+      await storage.deleteDir(this.getPath())
+
+      return true
+    } catch (error) {
+      throw this.getError(error)
+    }
+  }
+
+  getError (error) {
+    if (!error.code) {
+      return error
+    }
+
+    switch (error.code) {
+      case 'ENOENT':
+        return new Error(`'${this.name}' collection doesn't exist`)
     }
   }
 
@@ -88,11 +109,12 @@ class Collection {
    * @param {function|object} query
    * @return {Promise<array>}
    */
-  find (query) {
-    return this.getRecords(this.queryParser.build(query))
-      .catch((error) => {
-        return error
-      })
+  async find (query) {
+    try {
+      return await this.getRecords(this.queryParser.build(query))
+    } catch (error) {
+      throw this.getError(error)
+    }
   }
 
   /**
@@ -111,16 +133,20 @@ class Collection {
         const records = []
 
         for (const file of files) {
-          const record = await storage.readJson(path.join(pathname, file))
+          try {
+            const record = await storage.readJson(path.join(pathname, file))
 
-          if (query(record) === true) {
-            records.push(record)
+            if (query(record) === true) {
+              records.push(record)
+            }
+          } catch (error) {
+            throw error
           }
         }
 
         resolve(records)
       } catch (error) {
-        reject(error.message)
+        reject(error)
       }
     })
   }
@@ -148,6 +174,32 @@ class Collection {
     await this.init(pathname)
 
     return this.write(pathname, data)
+  }
+
+  list () {
+    const pathname = path.join(
+      this.config.dbpath,
+      this.database
+    )
+
+    return storage.readDir(pathname)
+  }
+
+  /**
+   * Rename a file or directory
+   *
+   * @param {string} newName
+   * @returns {Promise<boolean|NodeJS.ErrnoException>}
+   * @memberof Collection
+   */
+  rename (newName) {
+    const newPathname = path.join(
+      this.config.dbpath,
+      this.database,
+      newName
+    )
+
+    return storage.rename(this.getPath(), newPathname)
   }
 
   /**
@@ -183,40 +235,9 @@ class Collection {
       }
 
       return response
-      // return records.filter(async (record) => {
-      //   for (const [key, value] of Object.entries(update)) {
-      //     utils.setValue(record, key, value)
-      //   }
-
-      //   const pathname = path.join(
-      //     this.getPath(),
-      //     record._id + '.json'
-      //   )
-
-      //   const result = await storage.writeJson(pathname, record)
-
-      //   return result
-      // })
     } catch (e) {
       return Promise.reject(e.message)
     }
-
-    // return this.find(query).then((records) => {
-    //   return records.map((record) => {
-    //     for (const [key, value] of Object.entries(update)) {
-    //       setValue(record, key, value)
-    //     }
-
-    //     const pathname = path.join(
-    //       this._getPath(),
-    //       record._id + '.json'
-    //     )
-
-    //     storage.writeFile(pathname, JSON.stringify(record))
-
-    //     return record
-    //   })
-    // })
   }
 
   /**

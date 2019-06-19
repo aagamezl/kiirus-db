@@ -127,13 +127,47 @@ const readFile = (pathname, sync = false, encoding = 'utf8') => {
  * Read a file in JSON format
  *
  * @param {string} pathname
- * @param {boolen} [sync=false]
+ * @param {boolean} [sync=false]
  *
  * @returns {Promsie<object|NodeJS.ErrnoException>}
  */
 const readJson = async (pathname, sync = false) => {
-  const data = await readFile(pathname, sync)
-  return JSON.parse(data)
+  try {
+    const data = await readFile(pathname, sync)
+
+    return JSON.parse(data)
+  } catch (error) {
+    throw error
+  }
+}
+
+/**
+ * Rename a file or directory
+ *
+ * @param {string} oldPath
+ * @param {string} newPath
+ * @param {boolean} [sync=false]
+ *
+ * @returns {Promise<boolean|NodeJS.ErrnoException>}
+ */
+const rename = (oldPath, newPath, sync = false) => {
+  if (sync) {
+    try {
+      return Promise.resolve(fs.rename(oldPath, newPath))
+    } catch (error) {
+      return Promise.reject(error)
+    }
+  }
+
+  return new Promise((resolve, reject) => {
+    fs.rename(oldPath, newPath, async (error) => {
+      if (error) {
+        reject(error)
+      }
+
+      resolve(true)
+    })
+  })
 }
 
 /**
@@ -196,6 +230,7 @@ module.exports = {
   readDir,
   readFile,
   readJson,
+  rename,
   writeFile,
   writeJson
 }
