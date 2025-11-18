@@ -1,0 +1,53 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "index.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "lib/**/*.uspec.ts",
+    "lib/**/*.ispec.ts",
+    "jest.config*.js"
+  ]
+}
+// {
+//   "compilerOptions": {
+//     "allowJs": false,
+//     "declaration": true,
+//     // "declarationDir": "./lib/types",
+//     "esModuleInterop": true,
+//     "lib": [
+//       "ES2021"
+//     ],
+//     "module": "NodeNext",
+//     // "moduleResolution": "NodeNext",
+//     "noImplicitAny": true,
+//     "outDir": "./dist",
+//     "rootDir": "./src",
+//     "sourceMap": true,
+//     "strict": true,
+//     "target": "ES2021"
+//   },
+//   "include": [
+//     "src/**/*.ts"
+//   ],
+//   "exclude": [
+//     "dist",
+//     "./node_modules",
+//     "jest.config*.js"
+//   ]
+// }
