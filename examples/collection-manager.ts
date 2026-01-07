@@ -16,5 +16,12 @@ const document = { name: "John Doe", employeeNumber: -1 }
 //   // console.log(doc);
 // }
 
-const docs = await collectionManager.getAll();
-console.log(docs);
+// const docs = await collectionManager.getAll();
+const docs = await collectionManager.findAll();
+
+let count = 0;
+for await (const doc of docs) {
+  // console.log(doc);
+  count++;
+}
+console.log(`Count: ${count}`);
